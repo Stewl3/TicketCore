@@ -15,7 +15,6 @@ private:
     void saveParts();
     bool displayMenu();  // Returns false when ESC is pressed
     void addParts();
-    void editParts();
     void removeParts();
     void viewExtraParts();
 };

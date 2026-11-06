@@ -86,10 +86,7 @@ void TicketCreator::run() {
                     char addExtra = toupper(static_cast<unsigned char>(addExtraInput[0]));
                     
                     if (addExtra == 'Y') {
-                        Helpers::clearScreen();
-                        Helpers::printCreatorHeader();
-                        
-                        cout << "Available Extra Parts:\n"
+                        cout << "\nAvailable Extra Parts:\n"
                              << "---------------------\n";
                         
                         vector<string> extraPartNames;
@@ -99,7 +96,7 @@ void TicketCreator::run() {
                         
                         vector<string> selectedExtra = Helpers::selectFromNumberedList(
                             extraPartNames,
-                            "Select parts by number (space or comma separated, e.g., '1 3 5'): "
+                            "Select parts (e.g., '135'): "
                         );
                         
                         // Clean up the selected parts (remove the availability info)

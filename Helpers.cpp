@@ -264,7 +264,11 @@ namespace Helpers {
                 string quantityStr = token.substr(xPos + 1);
                 
                 try {
-                    int quantity = stoi(quantityStr);
+                    size_t parsedCharacters = 0;
+                    int quantity = stoi(quantityStr, &parsedCharacters);
+                    if (codeStr.empty() || parsedCharacters != quantityStr.size()) {
+                        continue;
+                    }
                     
                     if (codeStr.size() == 1) {
                         auto it = partsMap.find(codeStr);
@@ -399,9 +403,25 @@ namespace Helpers {
 
         while (ss >> token) {
             try {
-                int index = stoi(token);
-                if (index >= 1 && index <= static_cast<int>(items.size())) {
-                    if (!used[index - 1]) {
+                if (token.size() > 1 && token[0] == '#') {
+                    size_t parsedCharacters = 0;
+                    int index = stoi(token.substr(1), &parsedCharacters);
+                    if (parsedCharacters == token.size() - 1 && index >= 1 && index <= static_cast<int>(items.size()) && !used[index - 1]) {
+                        selected.push_back(items[index - 1]);
+                        used[index - 1] = true;
+                    }
+                } else if (token.size() > 1 && all_of(token.begin(), token.end(), [](unsigned char c) { return c >= '1' && c <= '9'; })) {
+                    for (char digit : token) {
+                        int index = digit - '0';
+                        if (index <= static_cast<int>(items.size()) && !used[index - 1]) {
+                            selected.push_back(items[index - 1]);
+                            used[index - 1] = true;
+                        }
+                    }
+                } else {
+                    size_t parsedCharacters = 0;
+                    int index = stoi(token, &parsedCharacters);
+                    if (parsedCharacters == token.size() && index >= 1 && index <= static_cast<int>(items.size()) && !used[index - 1]) {
                         selected.push_back(items[index - 1]);
                         used[index - 1] = true;
                     }

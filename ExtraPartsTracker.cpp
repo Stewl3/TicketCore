@@ -27,13 +27,24 @@ bool ExtraPartsTracker::displayMenu() {
     cout << "----------  Extra Parts Tracker  -----------" << "\n";
     cout << "----------------------------------------------" << "\n\n";
 
-    cout << "                   Menu    \n"
-         << "             -------------------\n";
+    cout << "Current Parts:\n"
+         << "-------------------\n";
+    if (parts.empty()) {
+        cout << "No extra parts currently tracked.\n";
+    } else {
+        for (const auto &entry : parts) {
+            cout << entry.first << ": " << entry.second << "\n";
+        }
+    }
+    cout << "-------------------\n";
+    cout << "\n";
 
-    cout << "              1. Add Parts\n";
-    cout << "              2. Edit Parts\n";
-    cout << "              3. Remove Parts\n";
-    cout << "              4. View Extra Parts\n";
+    cout << "        Menu     \n"
+         << "--------------------\n";
+
+    cout << "1. Add Parts\n";
+    cout << "2. Remove Parts\n";
+    cout << "3. View Extra Parts\n";
 
     char sel;
     if (!Helpers::promptMenuChar("", sel)) {
@@ -50,14 +61,10 @@ bool ExtraPartsTracker::displayMenu() {
             break;
         }
         case '2': {
-            editParts();
-            break;
-        }
-        case '3': {
             removeParts();
             break;
         }
-        case '4': {
+        case '3': {
             viewExtraParts();
             break;
         }
@@ -122,15 +129,24 @@ void ExtraPartsTracker::addParts() {
     cout << "----------------------------------------------" << "\n";
     cout << "----------  Extra Parts Tracker  -----------" << "\n";
     cout << "----------------------------------------------" << "\n\n";
-    cout << "Add Parts\n"
-         << "---------\n\n";
 
     auto partsMap = Helpers::getPartsMap();
 
     Helpers::printPartsMenu();
 
+    cout << "Current Extra Parts:\n"
+         << "-------------------\n";
+    if (parts.empty()) {
+        cout << "None\n";
+    } else {
+        for (const auto &entry : parts) {
+            cout << entry.first << ": " << entry.second << "\n";
+        }
+    }
+    cout << "\n";
+
     string part_selection;
-    if (!Helpers::promptLine("Enter the part(s) (e.g., '1 2 3' or '1x2 2x5'): ", part_selection)) {
+    if (!Helpers::promptLine("Enter part codes together (e.g., '123') or quantities (e.g., 'Ax10, Bx5'): ", part_selection)) {
         return;
     }
 
@@ -153,7 +169,9 @@ void ExtraPartsTracker::addParts() {
     cout << "\n" << "Parts to add:\n";
     cout << "-----------\n";
     for (const auto &entry : selectedParts) {
-        cout << entry.first << ": " << entry.second << "\n";
+        auto existing = parts.find(entry.first);
+        int current = existing != parts.end() ? existing->second : 0;
+        cout << entry.first << ": " << current << " -> " << current + entry.second << "\n";
     }
 
     // Confirm before adding
@@ -188,101 +206,6 @@ void ExtraPartsTracker::addParts() {
     this_thread::sleep_for(chrono::milliseconds(500));
 }
 
-void ExtraPartsTracker::editParts() {
-    if (parts.empty()) {
-        Helpers::clearScreen();
-        cout << "----------------------------------------------" << "\n";
-        cout << "----------  Extra Parts Tracker  -----------" << "\n";
-        cout << "----------------------------------------------" << "\n\n";
-        cout << "No parts available to edit." << "\n";
-        this_thread::sleep_for(chrono::milliseconds(1000));
-        return;
-    }
-
-    Helpers::clearScreen();
-    cout << "----------------------------------------------" << "\n";
-    cout << "----------  Extra Parts Tracker  -----------" << "\n";
-    cout << "----------------------------------------------" << "\n\n";
-
-        
-         auto partsMap = Helpers::getPartsMap();
-         
-         cout << "\n";
-         Helpers::printPartsMenu();
-         
-         cout << "Current Extra Parts:\n"
-              << "-------------------\n";
-         for (const auto &entry : parts) {
-             cout << entry.first << ": " << entry.second << "\n";
-         }
-    string part_selection;
-    if (!Helpers::promptLine("Enter the part(s) to edit with new quantities (e.g., '1x5 2x3'): ", part_selection)) {
-        return;
-    }
-
-    if (part_selection.empty()) {
-        cout << "No parts entered." << "\n";
-        this_thread::sleep_for(chrono::milliseconds(500));
-        return;
-    }
-
-    // Parse parts with quantities
-    unordered_map<string, int> selectedParts = Helpers::parsePartsWithQuantities(part_selection, partsMap);
-
-    if (selectedParts.empty()) {
-        cout << "Invalid part codes. Please try again." << "\n";
-        this_thread::sleep_for(chrono::milliseconds(500));
-        return;
-    }
-
-    // Check if all parts exist
-    bool allExist = true;
-    for (const auto &entry : selectedParts) {
-        if (parts.find(entry.first) == parts.end()) {
-            cout << "Part '" << entry.first << "' not found. Cannot edit non-existent parts." << "\n";
-            allExist = false;
-        }
-    }
-
-    if (!allExist) {
-        this_thread::sleep_for(chrono::milliseconds(500));
-        return;
-    }
-
-    // Display what will be changed
-    cout << "\nParts to update:\n";
-    cout << "---------------\n";
-    for (const auto &entry : selectedParts) {
-        cout << entry.first << ": " << parts[entry.first] << " -> " << entry.second << "\n";
-    }
-
-    // Confirm before updating
-    string confirmInput;
-    if (!Helpers::promptLine("\nUpdate these parts? (Y/N): ", confirmInput)) {
-        return;
-    }
-
-    if (confirmInput.empty()) {
-        confirmInput = "N";
-    }
-
-    char confirm = toupper(static_cast<unsigned char>(confirmInput[0]));
-    if (confirm != 'Y') {
-        cout << "Parts not updated." << "\n";
-        this_thread::sleep_for(chrono::milliseconds(500));
-        return;
-    }
-
-    // Update parts
-    for (const auto &entry : selectedParts) {
-        parts[entry.first] = entry.second;
-    }
-
-    saveParts();
-    cout << "Parts updated successfully." << "\n";
-    this_thread::sleep_for(chrono::milliseconds(500));
-}
-
 void ExtraPartsTracker::removeParts() {
     if (parts.empty()) {
         Helpers::clearScreen();
@@ -310,7 +233,7 @@ void ExtraPartsTracker::removeParts() {
              cout << entry.first << ": " << entry.second << "\n";
          }
          string part_selection;
-    if (!Helpers::promptLine("Enter the part(s) to remove (e.g., '1 2 3'): ", part_selection)) {
+    if (!Helpers::promptLine("Enter part codes together (e.g., '123') or quantities (e.g., 'Ax10, Bx5'): ", part_selection)) {
         return;
     }
 
@@ -320,37 +243,7 @@ void ExtraPartsTracker::removeParts() {
         return;
     }
 
-    // Parse parts (without quantities - just get the part names)
-    string s = part_selection;
-    for (char &c : s) {
-        if (c == ',') c = ' ';
-        c = toupper((unsigned char)c);
-    }
-
-    vector<string> partsToRemove;
-    string token;
-    stringstream ss(s);
-
-    while (ss >> token) {
-        if (token.size() == 1) {
-            auto it = partsMap.find(token);
-            if (it != partsMap.end()) {
-                partsToRemove.push_back(it->second);
-            }
-        } else {
-            for (char c : token) {
-                string key(1, c);
-                auto it = partsMap.find(key);
-                if (it != partsMap.end()) {
-                    partsToRemove.push_back(it->second);
-                }
-            }
-        }
-    }
-
-    // Remove duplicates
-    sort(partsToRemove.begin(), partsToRemove.end());
-    partsToRemove.erase(unique(partsToRemove.begin(), partsToRemove.end()), partsToRemove.end());
+    unordered_map<string, int> partsToRemove = Helpers::parsePartsWithQuantities(part_selection, partsMap);
 
     if (partsToRemove.empty()) {
         cout << "Invalid part codes. Please try again." << "\n";
@@ -360,9 +253,9 @@ void ExtraPartsTracker::removeParts() {
 
     // Check if all parts exist
     bool allExist = true;
-    for (const auto &partName : partsToRemove) {
-        if (parts.find(partName) == parts.end()) {
-            cout << "Part '" << partName << "' not found." << "\n";
+    for (const auto &entry : partsToRemove) {
+        if (parts.find(entry.first) == parts.end()) {
+            cout << "Part '" << entry.first << "' not found." << "\n";
             allExist = false;
         }
     }
@@ -375,8 +268,9 @@ void ExtraPartsTracker::removeParts() {
     // Display what will be removed
     cout << "\nParts to remove:\n";
     cout << "---------------\n";
-    for (const auto &partName : partsToRemove) {
-        cout << partName << " (Quantity: " << parts[partName] << ")" << "\n";
+    for (const auto &entry : partsToRemove) {
+        int remaining = max(0, parts[entry.first] - entry.second);
+        cout << entry.first << ": " << parts[entry.first] << " -> " << remaining << "\n";
     }
 
     // Confirm before removing
@@ -397,8 +291,11 @@ void ExtraPartsTracker::removeParts() {
     }
 
     // Remove parts
-    for (const auto &partName : partsToRemove) {
-        parts.erase(partName);
+    for (const auto &entry : partsToRemove) {
+        parts[entry.first] -= entry.second;
+        if (parts[entry.first] <= 0) {
+            parts.erase(entry.first);
+        }
     }
 
     saveParts();

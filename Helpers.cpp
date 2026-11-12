@@ -152,19 +152,20 @@ namespace Helpers {
             return true;
         }
 #else
-        int ch = cin.get();
-        if (ch == EOF) return false;
-        if (ch == 27) {
+        string input;
+        if (!getline(cin, input)) return false;
+
+        const size_t firstCharacter = input.find_first_not_of(" \t");
+        if (firstCharacter == string::npos) return false;
+
+        string selection = input.substr(firstCharacter);
+        transform(selection.begin(), selection.end(), selection.begin(),
+                  [](unsigned char c) { return static_cast<char>(tolower(c)); });
+        if (selection == "esc") {
             out = static_cast<char>(27);
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return true;
         }
-        while (ch == '\n' || ch == '\r') {
-            ch = cin.get();
-            if (ch == EOF) return false;
-        }
-        out = toupper(static_cast<unsigned char>(ch));
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        out = toupper(static_cast<unsigned char>(input[firstCharacter]));
         return true;
 #endif
     }

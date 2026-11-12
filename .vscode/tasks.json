@@ -28,6 +28,31 @@
       "problemMatcher": [
         "$gcc"
       ]
+    },
+    {
+      "label": "Build Ticket Creator (WSL)",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-g",
+        "main.cpp",
+        "MainMenu.cpp",
+        "TicketCreator.cpp",
+        "TicketViewer.cpp",
+        "Helpers.cpp",
+        "ExtraPartsTracker.cpp",
+        "-o",
+        "output/main-linux"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
     }
   ]
 }

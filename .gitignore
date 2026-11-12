@@ -1,0 +1,34 @@
+# Build directories
+/build/
+/Build/
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/
+
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE files
+.vscode/
+.idea/
+*.sln
+*.vcxproj*
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Output data (but keep the directory)
+/output/*.txt
+/output/Tickets/
+
+# Temporary files
+*.log
+*.tmp

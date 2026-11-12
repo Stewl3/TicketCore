@@ -4,6 +4,11 @@
 #include <vector>
 #include <unordered_map>
 
+#ifdef __unix__
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 namespace Helpers {
     std::unordered_map<std::string, std::string> getPartsMap();
     bool promptLine(const std::string &prompt, std::string &out);

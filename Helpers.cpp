@@ -12,9 +12,12 @@
 #include <cstdlib>
 #include <thread>
 #include <chrono>
+
 #ifdef _WIN32
 #include <conio.h>
-#include <windows.h>
+#else
+#include <termios.h>
+#include <unistd.h>
 #endif
 
 using namespace std;
@@ -30,6 +33,10 @@ namespace Helpers {
             SetConsoleCursorInfo(consoleHandle, &cursorInfo);
         }
     }
+#else
+    void setCursorVisibility(bool visible) {
+        // Linux/Unix terminal doesn't require explicit cursor control for basic I/O
+    }
 #endif
 
     unordered_map<string, string> getPartsMap() {
@@ -43,9 +50,7 @@ namespace Helpers {
     }
 
     bool promptLine(const string &prompt, string &out) {
-#ifdef _WIN32
         setCursorVisibility(true);
-#endif
         cout << prompt;
         out.clear();
 
@@ -95,9 +100,7 @@ namespace Helpers {
     }
 
     bool promptChar(const string &prompt, char &out) {
-#ifdef _WIN32
         setCursorVisibility(true);
-#endif
         cout << prompt;
 
 #ifdef _WIN32
@@ -127,9 +130,7 @@ namespace Helpers {
     }
 
     bool promptMenuChar(const string &prompt, char &out) {
-#ifdef _WIN32
         setCursorVisibility(false);
-#endif
         cout << prompt;
 
 #ifdef _WIN32

@@ -1,0 +1,14 @@
+LCD N08933-001
+Service Ticket 850047 5CG3246JQ1 HP Fortis G9 needs - Heat Sink, Bezel, Battery ADP*
+
+LCD N08933-001
+Service Ticket 850049 5CG3393QST HP Fortis G9 needs - Keyboard, Touchscreen, Bottom Cover, Bezel ADP*
+
+LCD N08935-001
+Service Ticket 850048 5CG3312574 HP Fortis G9 needs - Keyboard, Bottom Cover, Bezel ADP*
+
+LCD N08935-001
+Service Ticket 850050 5CG4413QSQ HP Fortis G9 needs - Top Cover, Bezel ADP*
+
+LCD N08935-001
+Service Ticket 850051 5CG324751L HP Fortis G9 needs - Motherboard, Keyboard, LCD, Bottom Cover, Bezel ADP*

@@ -1,0 +1,14 @@
+LCD N08933-001
+Service Ticket 829479 5CG3393W4N HP Fortis G9 needs - Touchscreen, Bottom Cover, Bezel, Hinge Cover ADP*
+
+LCD N08933-001
+Service Ticket 829483 5CG3393TYX HP Fortis G9 needs - Keyboard, Touchscreen, Bezel ADP*
+
+LCD N08935-001
+Service Ticket 829480 5CG32468WB HP Fortis G9 needs - LCD, Bottom Cover, Bezel, Hinge Cover ADP*
+
+LCD N08935-001
+Service Ticket 829481 5CG44119FN HP Fortis G9 needs - Motherboard, Bezel ADP*
+
+LCD N08935-001
+Service Ticket 829482 5CG4413SFS HP Fortis G9 needs - NIC, Bezel ADP*

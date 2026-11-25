@@ -144,7 +144,7 @@ void ExtraPartsTracker::addParts() {
     cout << "\n";
 
     string part_selection;
-    if (!Helpers::promptLine("Enter part codes together (e.g., '123') or quantities (e.g., 'Ax10, Bx5'): ", part_selection)) {
+    if (!Helpers::promptLine("\nEnter part codes together (e.g., '123') or quantities (e.g., 'Ax10, Bx5'): ", part_selection)) {
         return;
     }
 

@@ -25,7 +25,7 @@ void TicketCreator::run() {
         Helpers::clearScreen();
         Helpers::printCreatorHeader();
         
-        if (!Helpers::promptLine("\nEnter Ticket Number (Type 'e' to return to Main Menu): \n", ticket_input)) break;
+        if (!Helpers::promptLine("\nEnter Ticket Number: \n", ticket_input)) break;
 
         
         if (ticket_input.empty()) {

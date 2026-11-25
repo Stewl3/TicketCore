@@ -153,7 +153,7 @@ void TicketViewer::run() {
             
             while (true) {
                 string ticketInput;
-                if (!Helpers::promptLine("Enter ticket number to search (or type 'back' to return): ", ticketInput)) break;
+                if (!Helpers::promptLine("Enter ticket number: ", ticketInput)) break;
 
                 string lowerInput = ticketInput;
                 transform(lowerInput.begin(), lowerInput.end(), lowerInput.begin(), [](unsigned char c) { return tolower(c); });

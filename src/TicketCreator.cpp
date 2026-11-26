@@ -50,7 +50,7 @@ void TicketCreator::run() {
             this_thread::sleep_for(chrono::milliseconds(500));
             continue;
         }
-        if (!Helpers::promptLine("Enter Serial Number: ", serial_number)) break;
+        if (!Helpers::promptLine("\nEnter Serial Number: ", serial_number)) break;
         cout << "\n";
 
         transform(serial_number.begin(), serial_number.end(), serial_number.begin(), [](unsigned char c) { return toupper(c); });

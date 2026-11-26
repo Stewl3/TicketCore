@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 
+#include <cstdlib>
 #include <filesystem>
 #include <iostream>
 
@@ -7,9 +8,9 @@ int main(int, char *argv[]) {
     namespace fs = std::filesystem;
 
 #ifdef TICKETCORE_INSTALLED
-    // Installed mode: use LOCALAPPDATA
-    const char* localAppData = std::getenv("LOCALAPPDATA");
-    if (!localAppData) {
+    (void)argv;
+    const wchar_t* localAppData = _wgetenv(L"LOCALAPPDATA");
+    if (!localAppData || !*localAppData) {
         std::cerr << "ERROR: LOCALAPPDATA is not set" << std::endl;
         return 1;
     }

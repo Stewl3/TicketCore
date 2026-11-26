@@ -17,12 +17,13 @@ jobs:
       - name: Configure and build
         shell: pwsh
         run: |
-          cmake -S . -B build -A x64 -DTICKETCORE_INSTALLED=ON "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=$env:GITHUB_WORKSPACE\build\installer-bin"
+          cmake -S . -B build -A x64 -DTICKETCORE_INSTALLED=ON -DCMAKE_CXX_FLAGS_INIT=/MP "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=$env:GITHUB_WORKSPACE\build\installer-bin"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cmake --build build --config Release
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Test installed startup
+        timeout-minutes: 2
         shell: pwsh
         run: .\tests\test-installed-startup.ps1 -Executable "$env:GITHUB_WORKSPACE\build\installer-bin\ticketcore.exe"
 

@@ -22,10 +22,13 @@ void TicketViewer::run() {
             return;
         }
 
-        cout << "1. View today's tickets" << "\n"
-             << "2. Search by date" << "\n"
-             << "3. View all saved tickets" << "\n"
-             << "4. Search by ticket number" << "\n\n";
+        cout << "                   Main Menu    \n"
+             << "         -----------------------------\n";
+
+        cout << "           1. View today's tickets" << "\n"
+             << "           2. Search by date" << "\n"
+             << "           3. View all saved tickets" << "\n"
+             << "           4. Search by ticket number" << "\n\n";
 
         char sel;
         if (!Helpers::promptMenuChar("", sel)) {

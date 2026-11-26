@@ -41,6 +41,31 @@ jobs:
           & $iscc "/DAppVersion=$version" "/DExecutable=$env:GITHUB_WORKSPACE\build\installer-bin\ticketcore.exe" "/DOutputDir=$env:GITHUB_WORKSPACE\build\installer" installer\TicketCore.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      - name: Sign installer with test certificate
+        shell: pwsh
+        env:
+          SIGNING_PFX_BASE64: ${{ secrets.SIGNING_PFX_BASE64 }}
+          SIGNING_PFX_PASSWORD: ${{ secrets.SIGNING_PFX_PASSWORD }}
+        run: |
+          if (-not $env:SIGNING_PFX_BASE64 -and -not $env:SIGNING_PFX_PASSWORD) {
+            Write-Warning 'No test signing certificate configured; the installer will be unsigned.'
+            return
+          }
+          if (-not $env:SIGNING_PFX_BASE64 -or -not $env:SIGNING_PFX_PASSWORD) {
+            throw 'Both SIGNING_PFX_BASE64 and SIGNING_PFX_PASSWORD are required for signing.'
+          }
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          $installer = Join-Path $env:GITHUB_WORKSPACE "build\installer\TicketCore-Setup-$version.exe"
+          $certificate = Join-Path $env:RUNNER_TEMP ([IO.Path]::GetRandomFileName() + '.pfx')
+          try {
+            [IO.File]::WriteAllBytes($certificate, [Convert]::FromBase64String($env:SIGNING_PFX_BASE64))
+            .\scripts\sign-windows-executable.ps1 -CertificatePath $certificate -CertificatePassword $env:SIGNING_PFX_PASSWORD -ExecutablePath $installer -Description 'TicketCore installer' -AllowUntrustedTestCertificate
+          } finally {
+            if (Test-Path -LiteralPath $certificate) {
+              Remove-Item -LiteralPath $certificate -Force
+            }
+          }
+
       - name: Publish installer
         shell: pwsh
         env:

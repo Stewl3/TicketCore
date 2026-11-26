@@ -28,7 +28,16 @@ Thumbs.db
 # Output data (but keep the directory)
 /output/*.txt
 /output/Tickets/
+/output/data/
+/output/output/
 
 # Temporary files
 *.log
 *.tmp
+
+# Code-signing certificates and secrets
+*.pfx
+*.p12
+*.key
+*.password
+*.secret

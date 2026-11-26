@@ -1,0 +1,57 @@
+name: Windows installer release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure and build
+        shell: pwsh
+        run: |
+          cmake -S . -B build -A x64 -DTICKETCORE_INSTALLED=ON "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=$env:GITHUB_WORKSPACE\build\installer-bin"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build --config Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Test installed startup
+        shell: pwsh
+        run: .\tests\test-installed-startup.ps1 -Executable "$env:GITHUB_WORKSPACE\build\installer-bin\ticketcore.exe"
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw 'Release tags must have the form v1.2.3.'
+          }
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path -LiteralPath $iscc)) {
+            throw 'Inno Setup 6 was not found on the runner.'
+          }
+          & $iscc "/DAppVersion=$version" "/DExecutable=$env:GITHUB_WORKSPACE\build\installer-bin\ticketcore.exe" "/DOutputDir=$env:GITHUB_WORKSPACE\build\installer" installer\TicketCore.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Publish installer
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $version = $tag -replace '^v', ''
+          $installer = "build\installer\TicketCore-Setup-$version.exe"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $installer --clobber
+          } else {
+            gh release create $tag $installer --generate-notes
+          }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
